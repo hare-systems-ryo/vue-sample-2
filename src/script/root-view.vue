@@ -14,6 +14,8 @@ interface Modal {
   test: ModalControl<{
     disabled: boolean;
   }>;
+  //開閉だけで他は省略
+  test2: ModalControl;
 }
 
 const modal = reactive<Modal>({
@@ -36,6 +38,8 @@ const modal = reactive<Modal>({
       console.log('closeAfter', state);
     },
   }),
+  //開閉だけで他は省略
+  test2: InitModalControl(),
 });
 
 onMounted(() => {
@@ -53,6 +57,9 @@ onMounted(() => {
           modal.test.state.disabled={{ modal.test.state.disabled }}
         </div>
       </div>
+      <div class="card-body">
+        <div class="btn btn-info" @click="modal.test2.show()">modal test2ひらく</div>
+      </div>
     </div>
   </div>
   <teleport to="#teleport">
@@ -64,6 +71,14 @@ onMounted(() => {
           <div class="btn btn-info mx-1" @click="modal.test.state.disabled = !modal.test.state.disabled">
             modal.test.state.disabled={{ modal.test.state.disabled }}
           </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-base" :class="{ show: modal.test2.isOpen }">
+      <div class="card">
+        <div class="card-header">これはモーダルですtest2</div>
+        <div class="card-body">
+          <div class="btn btn-info" @click="modal.test2.close()">modal閉じる</div>
         </div>
       </div>
     </div>
