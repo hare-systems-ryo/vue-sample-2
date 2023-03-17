@@ -16,11 +16,8 @@ interface Modal {
   }>;
 }
 
-const modalElm = ref();
 const modal = reactive<Modal>({
-  test: InitModalControl<{
-    disabled: boolean;
-  }>({
+  test: InitModalControl<Modal['test']['state']>({
     state: { disabled: false },
     showBefore: async (state) => {
       console.log('showBefore', state);
@@ -95,9 +92,6 @@ onMounted(() => {
       overflow: auto;
     }
   }
-}
-.item:not(:last-child) {
-  margin-top: 20px;
 }
 
 .card,
