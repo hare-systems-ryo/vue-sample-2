@@ -5,7 +5,7 @@ export interface ModalControl<T = any> {
   show: (() => void) | (() => Promise<void>);
   /**
    * showBefore モーダルが開く前に実行される関数
-   * - false をreturnするとモーダルを開く処理は中止される
+   * - true をreturnするとモーダルを開く処理は中止される
    */
   showBefore: OptionalFunction<T>;
   showAfter: OptionalFunction<T>;
@@ -15,7 +15,7 @@ export interface ModalControl<T = any> {
   close: () => void;
   /**
    * closeBefore モーダルが閉じる前に実行される関数
-   * - false をreturnするとモーダルを閉じる処理は中止される
+   * - true をreturnするとモーダルを閉じる処理は中止される
    */
   closeBefore: OptionalFunction<T>;
   closeAfter: OptionalFunction<T>;
@@ -49,6 +49,7 @@ export const InitModalControl = <T = any>(arg?: {
   };
   return ret;
 };
+
 const isAsync = (func: any) => {
   try {
     if (func === null) return false;
