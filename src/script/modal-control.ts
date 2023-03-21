@@ -20,7 +20,7 @@ export interface ModalControl<T = any> {
   closeBefore: OptionalFunction<T>;
   closeAfter: OptionalFunction<T>;
   //状態管理
-  isOpen: boolean;
+  isShow: boolean;
   //データ保持
   state: T;
 }
@@ -36,18 +36,17 @@ export const InitModalControl = <T = any>(arg?: {
 }): ModalControl<T> => {
   // if (arg === undefined) arg = {};
   const noneInitMessage = 'が初期化されていません';
-  const ret: ModalControl = {
+  return {
     show: () => console.log('[show]' + noneInitMessage),
     showBefore: null,
     showAfter: null,
     close: () => console.log('[close]' + noneInitMessage),
     closeBefore: null,
     closeAfter: null,
-    isOpen: false,
+    isShow: false,
     state: null,
     ...arg,
-  };
-  return ret;
+  } as ModalControl;
 };
 
 const isAsync = (func: any) => {
@@ -69,82 +68,51 @@ const isAsync = (func: any) => {
 export const InitModals = (modal: any, nextTick: any) => {
   Object.keys(modal).forEach((key) => {
     const m: ModalControl = (modal as any)[key];
-    if (isAsync(m.showBefore) || isAsync(m.showAfter)) {
-      m.show = async () => {
-        if (m.showBefore) {
-          if (isAsync(m.showBefore)) {
-            if ((await m.showBefore(modal.test.state)) === true) {
-              console.info('モーダルのShow動作はキャンセルされました');
-              return;
-            }
-          } else {
-            if (m.showBefore(modal.test.state) === true) {
-              console.info('モーダルのShow動作はキャンセルされました');
-              return;
-            }
+    m.show = async () => {
+      if (m.showBefore) {
+        if (isAsync(m.showBefore)) {
+          if ((await m.showBefore(m.state)) === true) {
+            console.info('モーダルのShow動作はキャンセルされました');
+            return;
+          }
+        } else {
+          if (m.showBefore(m.state) === true) {
+            console.info('モーダルのShow動作はキャンセルされました');
+            return;
           }
         }
-        m.isOpen = true;
-        if (!m.showAfter) return;
-        await nextTick();
-        if (isAsync(m.showAfter)) {
-          await m.showAfter(modal.test.state);
-        } else {
-          m.showAfter(modal.test.state);
-        }
-      };
-    } else {
-      m.show = () => {
-        if (m.showBefore) {
-          if (m.showBefore(modal.test.state) === true) return;
-        }
-        m.isOpen = true;
-        if (!m.showAfter) return;
-        nextTick(() => {
-          if (!m.showAfter) return;
-          m.showAfter(modal.test.state);
-        });
-      };
-    }
-    if (isAsync(m.showBefore) || isAsync(m.showAfter)) {
-      m.close = async () => {
-        if (m.closeBefore) {
-          if (isAsync(m.closeBefore)) {
-            if ((await m.closeBefore(modal.test.state)) === true) {
-              console.info('モーダルのClose動作はキャンセルされました');
-              return;
-            }
-          } else {
-            if (m.closeBefore(modal.test.state) === true) {
-              console.info('モーダルのClose動作はキャンセルされました');
-              return;
-            }
+      }
+      m.isShow = true;
+      if (!m.showAfter) return;
+      await nextTick();
+      if (isAsync(m.showAfter)) {
+        await m.showAfter(m.state);
+      } else {
+        m.showAfter(m.state);
+      }
+    };
+    m.close = async () => {
+      if (m.closeBefore) {
+        if (isAsync(m.closeBefore)) {
+          if ((await m.closeBefore(m.state)) === true) {
+            console.info('モーダルのClose動作はキャンセルされました');
+            return;
           }
-        }
-        m.isOpen = false;
-        await nextTick();
-        if (!m.closeAfter) return;
-        if (isAsync(m.closeAfter)) {
-          await m.closeAfter(modal.test.state);
         } else {
-          m.closeAfter(modal.test.state);
-        }
-      };
-    } else {
-      m.close = () => {
-        if (m.closeBefore) {
-          if (m.closeBefore(modal.test.state) === true) {
+          if (m.closeBefore(m.state) === true) {
             console.info('モーダルのClose動作はキャンセルされました');
             return;
           }
         }
-        m.isOpen = false;
-        if (!m.closeAfter) return;
-        nextTick(() => {
-          if (!m.closeAfter) return;
-          m.closeAfter(modal.test.state);
-        });
-      };
-    }
+      }
+      m.isShow = false;
+      await nextTick();
+      if (!m.closeAfter) return;
+      if (isAsync(m.closeAfter)) {
+        await m.closeAfter(m.state);
+      } else {
+        m.closeAfter(m.state);
+      }
+    };
   });
 };
