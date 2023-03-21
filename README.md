@@ -1,16 +1,8 @@
 # Vueで使用しているModalの開閉を管理するオブジェクト（備忘録）
 
 詳しくはQiitaにて
+https://qiita.com/harenokuni/items/5a42d1ee93f31dd3b853
 
-# 何ができるか
-* モーダルの開閉制御を一括で管理できる
-* 特定の条件で開閉制御を禁止する動作が一箇所で管理できる。
-※ただそれだけ・・・・
-
-
-
-関数登録用の関数作成予定 2023-03-21
-※多少問題があった・・・・ので
 # Demo
 
 https://harenokuni.github.io/vue-sample-2/
